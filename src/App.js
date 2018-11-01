@@ -7,7 +7,8 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      todos: []
+      todos: [],
+      inputSubmit: ''
     }
   }
 
@@ -24,14 +25,54 @@ class App extends Component {
         })
       )
       .catch(err => console.log(err))
+  } 
+
+  deleteTodo = async index => {
+    await axios
+      .delete(`https://ib-api-todo-list.herokuapp.com/todos/${index}`)
+      .then(res => console.log(res))
+      .catch(err => console.log(err))
+    this.getAllTodos();
+  }
+
+  submitTodo = index => {
+    axios
+      .post(`https://ib-api-todo-list.herokuapp.com/todos/`, {
+        description: this.state.inputSubmit,
+        done: false
+      })
+      .then(res => console.log(res))
+      .catch(err => console.log(err))
+    this.getAllTodos();
+  }
+
+  handleOnChange = e => {
+    this.setState({
+      [e.target.name] : e.target.value
+    })
   }
 
   render() {
     return (
       <div> 
         <h1> Todo List</h1>
-        {this.state.todos.map(todo => (
-          <TodoDetail description = {todo.description} done={todo.done} />
+        <p> description </p>
+
+       <input
+        type = 'text'
+        name = 'inputSubmit'
+        value = {this.state.inputSubmit}
+        onChange = {this.handleOnChange}
+       /> 
+
+       <button onClick={() => this.submitTodo()}> submit </button>
+
+        {this.state.todos.map((todo, index) => (
+          <TodoDetail 
+            description = {todo.description} 
+            done={todo.done} 
+            index={index}
+            deleteTodo={this.deleteTodo}/>
         ))}
       </div>
     );
