@@ -1,25 +1,38 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
+import TodoDetail from './components/TodoDetail';
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      todos: []
+    }
+  }
+
+  componentDidMount() {
+    this.getAllTodos();
+  }
+
+  getAllTodos = () => {
+    axios
+      .get("https://ib-api-todo-list.herokuapp.com/todos")
+      .then(res =>
+        this.setState({
+          todos : res.data.data
+        })
+      )
+      .catch(err => console.log(err))
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div> 
+        <h1> Todo List</h1>
+        {this.state.todos.map(todo => (
+          <TodoDetail description = {todo.description} done={todo.done} />
+        ))}
       </div>
     );
   }
