@@ -9,7 +9,8 @@ class App extends Component {
     this.state = {
       todos: [],
       inputSubmit: '',
-      inputSearch: ''
+      inputSearch: '',
+      filteredTodos: []
     }
   }
 
@@ -36,17 +37,27 @@ class App extends Component {
     this.getAllTodos();
   }
 
-  submitTodo = index => {
-    axios
+  submitTodo = async index => {
+    await axios
       .post(`https://ib-api-todo-list.herokuapp.com/todos/`, {
         description: this.state.inputSubmit,
         done: false
       })
       .then(res => console.log(res))
       .catch(err => console.log(err))
-    this.getAllTodos();
+      this.getAllTodos()
   }
 
+  handleSearch = async (e) => {
+    await this.handleOnChange(e)
+    axios
+      .get(`https://ib-api-todo-list.herokuapp.com/todos/search?description=${this.state.inputSearch}`)
+      .then(res => {console.log(res)
+              this.setState({
+                filteredTodos: res.data
+              })})
+      .catch(err => console.log(err))
+  }
 
 
   handleOnChange = e => {
@@ -68,15 +79,25 @@ class App extends Component {
        /> 
 
        <button onClick={() => this.submitTodo()}> submit </button>
+        
         <p> Search </p>
        <input
         type = 'text'
         name = 'inputSearch'
         value = {this.state.inputSearch}
-        onChange = {this.handleOnChange}
-       /> 
+        onChange = {this.handleSearch}
+       />
+       {/* <button onClick={() => this.handleSearch()}>search</button>  */}
 
-        {this.state.todos.map((todo, index) => (
+        {this.state.inputSearch !== '' && this.state.filteredTodos.map((todo, index) => (
+          <TodoDetail 
+            description = {todo.description} 
+            done={todo.done} 
+            index={index}
+            deleteTodo={this.deleteTodo}/>
+        ))}
+
+        {this.state.inputSearch === '' && this.state.todos.map((todo, index) => (
           <TodoDetail 
             description = {todo.description} 
             done={todo.done} 
