@@ -8,7 +8,8 @@ class App extends Component {
     super();
     this.state = {
       todos: [],
-      inputSubmit: ''
+      inputSubmit: '',
+      inputSearch: ''
     }
   }
 
@@ -46,6 +47,8 @@ class App extends Component {
     this.getAllTodos();
   }
 
+
+
   handleOnChange = e => {
     this.setState({
       [e.target.name] : e.target.value
@@ -57,7 +60,6 @@ class App extends Component {
       <div> 
         <h1> Todo List</h1>
         <p> description </p>
-
        <input
         type = 'text'
         name = 'inputSubmit'
@@ -66,6 +68,13 @@ class App extends Component {
        /> 
 
        <button onClick={() => this.submitTodo()}> submit </button>
+        <p> Search </p>
+       <input
+        type = 'text'
+        name = 'inputSearch'
+        value = {this.state.inputSearch}
+        onChange = {this.handleOnChange}
+       /> 
 
         {this.state.todos.map((todo, index) => (
           <TodoDetail 
